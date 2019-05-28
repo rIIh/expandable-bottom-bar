@@ -70,6 +70,10 @@ class BottomBarController extends ChangeNotifier {
   void open() {
     _animationController.fling(velocity: 1.0);
   }
+
+  bool isOpen() {
+    return _animationController.value == 1;
+  }
 }
 
 class DefaultBottomBarController extends StatefulWidget {
