@@ -12,8 +12,13 @@ class BottomBarController extends ChangeNotifier {
         assert(dragLength == null || dragLength > 0),
         dragLength = dragLength;
 
+  @Deprecated("use state instead. Will be removed soon")
   Animation<double> get animation =>
       _animationController?.view ?? kAlwaysCompleteAnimation;
+
+  Animation<double> get state =>
+      _animationController?.view ?? kAlwaysCompleteAnimation;
+
   final AnimationController _animationController;
 
   void onDrag(DragUpdateDetails details) {

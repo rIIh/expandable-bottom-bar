@@ -1,5 +1,6 @@
 import 'package:expandable_bottom_bar/expandable_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'theme.dart';
 
 void main() => runApp(MaterialApp(home: Example()));
 
@@ -7,6 +8,7 @@ class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: FlutterDark.dark(ThemeData.dark()),
       home: DefaultBottomBarController(
         child: Page(),
       ),

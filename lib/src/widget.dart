@@ -2,11 +2,14 @@ import 'package:expandable_bottom_bar/src/controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+enum Side { Top, Bottom }
+
 class BottomExpandableAppBar extends StatefulWidget {
   final Widget expandedBody;
   final double expandedHeight;
   final Widget bottomAppBarBody;
   final BottomBarController controller;
+  final Side attachSide;
 
   final double appBarHeight;
   // TODO: Get max available height
@@ -31,6 +34,7 @@ class BottomExpandableAppBar extends StatefulWidget {
     this.shape,
     this.expandedHeight: 150,
     this.appBarHeight: 50,
+    this.attachSide: Side.Bottom,
     this.constraints,
     this.bottomAppBarColor,
     this.appBarDecoration,
@@ -51,34 +55,34 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
   double panelState;
 
   void _handleBottomBarControllerAnimationTick() {
-    if (_controller.animation.value == panelState) return;
-    panelState = _controller.animation.value;
+    if (_controller.state.value == panelState) return;
+    panelState = _controller.state.value;
     setState(() {});
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateTabController();
-    panelState = _controller?.animation?.value ?? panelState;
+    _updateBarController();
+    panelState = _controller?.state?.value ?? panelState;
   }
 
   @override
   void didUpdateWidget(BottomExpandableAppBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) _updateTabController();
+    if (widget.controller != oldWidget.controller) _updateBarController();
   }
 
   @override
   void dispose() {
     if (_controller != null)
-      _controller.animation
+      _controller.state
           .removeListener(_handleBottomBarControllerAnimationTick);
     // We don't own the _controller Animation, so it's not disposed here.
     super.dispose();
   }
 
-  void _updateTabController() {
+  void _updateBarController() {
     final BottomBarController newController =
         widget.controller ?? DefaultBottomBarController.of(context);
     assert(() {
@@ -95,12 +99,12 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
     if (newController == _controller) return;
 
     if (_controller != null) {
-      _controller.animation
+      _controller.state
           .removeListener(_handleBottomBarControllerAnimationTick);
     }
     _controller = newController;
     if (_controller != null) {
-      _controller.animation
+      _controller.state
           .addListener(_handleBottomBarControllerAnimationTick);
     }
   }
@@ -115,7 +119,10 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
       color: Colors.transparent,
       elevation: 0,
       child: Stack(
-        alignment: Alignment.bottomCenter,
+        //TODO: Find out how to get top app bar overlap body content of scaffold 
+        alignment: widget.attachSide == Side.Bottom
+            ? Alignment.bottomCenter
+            : Alignment.topCenter,
         children: <Widget>[
           Padding(
             padding:
@@ -151,12 +158,14 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
               height: widget.appBarHeight,
               child: widget.bottomAppBarBody,
             ),
-            clipper: _BottomAppBarClipper(
-              geometry: Scaffold.geometryOf(context),
-              shape: widget.shape,
-              notchMargin: 5,
-              buttonOffset: widget.bottomOffset,
-            ),
+            clipper: widget.shape != null
+                ? _BottomAppBarClipper(
+                    geometry: Scaffold.geometryOf(context),
+                    shape: widget.shape,
+                    notchMargin: 5,
+                    buttonOffset: widget.bottomOffset,
+                  )
+                : null,
           ),
         ],
       ),
