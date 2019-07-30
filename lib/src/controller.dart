@@ -62,7 +62,7 @@ class BottomBarController extends ChangeNotifier {
 
   //close the panel
   void close() {
-    _animationController.fling(velocity: -1.0);
+    _animationController.fling(velocity: -1.0).then((_) => notifyListeners());
   }
 
   void swap() {
@@ -73,7 +73,7 @@ class BottomBarController extends ChangeNotifier {
 
   //open the panel
   void open() {
-    _animationController.fling(velocity: 1.0);
+    _animationController.fling(velocity: 1.0).then((_) => notifyListeners());
   }
 
   bool isOpen() {
