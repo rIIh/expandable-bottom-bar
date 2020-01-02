@@ -2,28 +2,59 @@ import 'package:expandable_bottom_bar/src/controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+/// An enum representing different sides of a screen
 enum Side { Top, Bottom }
 
+/// Bottom app bar with an animated, expandable content body
 class BottomExpandableAppBar extends StatefulWidget {
+  /// The content visible when the [BottomExpandableAppBar]
+  /// is expanded
   final Widget expandedBody;
+
+  /// The height of the expanded [BottomExpandableAppBar]
   final double expandedHeight;
+
+  /// The content of the bottom app bar
   final Widget bottomAppBarBody;
+
+  /// A [BottomBarController] to use with the
+  /// [BottomExpandableAppBar]
   final BottomBarController controller;
+
+  /// A [Side] which determines which side of the
+  /// screen the panel is attached to
   final Side attachSide;
 
+  /// Height of the bottom app bar
   final double appBarHeight;
   // TODO: Get max available height
   final bool useMax;
 
+  /// [BoxConstraints] which determines the final height
+  /// of the panel
   final BoxConstraints constraints;
 
+  /// [NotchedShape] shape for a [FloatingActionButton]
   final NotchedShape shape;
+
+  /// Background [Color] for the panel
   final Color expandedBackColor;
+
+  /// [Color] of the bottom app bar
   final Color bottomAppBarColor;
+
+  /// Margin on the horizontal axis
+  /// for the bottom app bar content
   final double horizontalMargin;
+
+  /// Offset for the content from
+  /// the bottom of the bottom app bar
   final double bottomOffset;
 
+  /// [Decoration] for the panel container
   final Decoration expandedDecoration;
+
+  /// [Decoration] for the bottom app bar
   final Decoration appBarDecoration;
 
   BottomExpandableAppBar({
@@ -76,8 +107,7 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
   @override
   void dispose() {
     if (_controller != null)
-      _controller.state
-          .removeListener(_handleBottomBarControllerAnimationTick);
+      _controller.state.removeListener(_handleBottomBarControllerAnimationTick);
     // We don't own the _controller Animation, so it's not disposed here.
     super.dispose();
   }
@@ -99,13 +129,11 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
     if (newController == _controller) return;
 
     if (_controller != null) {
-      _controller.state
-          .removeListener(_handleBottomBarControllerAnimationTick);
+      _controller.state.removeListener(_handleBottomBarControllerAnimationTick);
     }
     _controller = newController;
     if (_controller != null) {
-      _controller.state
-          .addListener(_handleBottomBarControllerAnimationTick);
+      _controller.state.addListener(_handleBottomBarControllerAnimationTick);
     }
   }
 
@@ -119,7 +147,7 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
       color: Colors.transparent,
       elevation: 0,
       child: Stack(
-        //TODO: Find out how to get top app bar overlap body content of scaffold 
+        //TODO: Find out how to get top app bar overlap body content of scaffold
         alignment: widget.attachSide == Side.Bottom
             ? Alignment.bottomCenter
             : Alignment.topCenter,
@@ -148,7 +176,7 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
           ),
           // * Mask content of bottom container in notch
           Container(
-            // some mask code
+            // Some mask code
             height: widget.appBarHeight,
           ),
           ClipPath(
@@ -173,7 +201,7 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
   }
 }
 
-//Copied from flutter sdk
+// Copied from Flutter SDK
 class _BottomAppBarClipper extends CustomClipper<Path> {
   const _BottomAppBarClipper(
       {@required this.geometry,
