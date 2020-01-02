@@ -17,7 +17,8 @@ class BottomBarController extends ChangeNotifier {
     _animationController.addStatusListener(_statusListener);
   }
 
-  @Deprecated("use state instead. Will be removed soon")
+  @Deprecated(
+      "This is deprecated in favor of `state`, and will be removed in the future")
   Animation<double> get animation =>
       _animationController?.view ?? kAlwaysCompleteAnimation;
 
