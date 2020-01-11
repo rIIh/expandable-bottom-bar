@@ -1,10 +1,12 @@
 # ExpandableBottomAppBar
 
+[![pub package](https://img.shields.io/pub/v/expandable_bottom_bar)](https://pub.dev/packages/expandable_bottom_bar)
+
 Animatable bottom app bar with expandable sheet
 
 ## Preview
 
-<img src="https://github.com/rIIh/expandable-bottom-bar/raw/master/showcase.gif" height="650">
+![preview](https://github.com/rIIh/expandable-bottom-bar/raw/master/showcase.gif)
 
 ## Getting Started
 
@@ -79,12 +81,12 @@ or
 
 ### BottomAppBarController
 
-#### settings
+#### Settings
 
 **snap** - if true sheet will snap to opened and closed state<br/>
 **dragLength** - distance that pointer should travel for fully open/close the sheet<br/>
 
-#### callbacks
+#### Callbacks
 
 *Should have dragLength defined*<br/>
 **onDrag** - use that with GestureDetector for swipe control<br/>

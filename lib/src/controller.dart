@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 /// A listenable controller for use with [BottomExpandableBar],
 /// with behavior-related properties and methods
 class BottomBarController extends ChangeNotifier {
+
+  /// Set to true if sheet should snap to Opened and Closed state
   final bool snap;
+
+  /// Distance that pointer should travel for fully open or close the sheet
   final double dragLength;
 
   /// Creates a [BottomBarController] with the given [vsync] ticker provider
