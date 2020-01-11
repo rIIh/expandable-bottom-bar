@@ -1,39 +1,53 @@
 import 'package:flutter/material.dart';
 
+/// A listenable controller for use with [BottomExpandableBar],
+/// with behavior-related properties and methods
 class BottomBarController extends ChangeNotifier {
   final bool snap;
   final double dragLength;
 
+  /// Creates a [BottomBarController] with the given [vsync] ticker provider
   BottomBarController({
     @required TickerProvider vsync,
     this.snap: true,
     double dragLength,
   })  : _animationController = AnimationController(vsync: vsync),
         assert(dragLength == null || dragLength > 0),
-        dragLength = dragLength;
+        dragLength = dragLength {
+    _animationController.addStatusListener(_statusListener);
+  }
 
-  @Deprecated("use state instead. Will be removed soon")
+  @Deprecated(
+      "This is deprecated in favor of `state`, and will be removed in the future")
   Animation<double> get animation =>
       _animationController?.view ?? kAlwaysCompleteAnimation;
 
+  /// Returns the [view] of the internal [AnimationController],
+  /// which cannot mutate the state of the [AnimationController]
   Animation<double> get state =>
       _animationController?.view ?? kAlwaysCompleteAnimation;
 
   final AnimationController _animationController;
 
+  void _statusListener(AnimationStatus status) => notifyListeners();
+
+  /// Updates the internal [AnimationController] with the
+  /// [DragUpdateDetails] of a [GestureDragUpdateCallback]
   void onDrag(DragUpdateDetails details) {
     if (dragLength == null) return;
     _animationController.value -= details.primaryDelta / (dragLength);
   }
 
+  /// Updates the animation according to the [DragEndDetails]
+  /// details of a [GestureDragEndCallback]
   void onDragEnd(DragEndDetails details) {
     if (dragLength == null) return;
     double minFlingVelocity = 365.0;
 
-    //let the current animation finish before starting a new one
+    // Let the current animation finish before starting a new one
     if (_animationController.isAnimating) return;
 
-    //check if the velocity is sufficient to constitute fling
+    // Check if the velocity is sufficient to constitute fling
     if (details.velocity.pixelsPerSecond.dy.abs() >= minFlingVelocity) {
       double visualVelocity =
           -details.velocity.pixelsPerSecond.dy / (dragLength);
@@ -51,7 +65,7 @@ class BottomBarController extends ChangeNotifier {
       return;
     }
 
-    // check if the controller is already halfway there
+    // Check if the controller is already halfway there
     if (snap) {
       if (_animationController.value > 0.5)
         open();
@@ -60,38 +74,56 @@ class BottomBarController extends ChangeNotifier {
     }
   }
 
-  //close the panel
-  void close() {
-    _animationController.fling(velocity: -1.0).then((_) => notifyListeners());
+  /// Closes the panel
+  void close({double velocity = -1.0}) {
+    _animationController.fling(velocity: -velocity.abs());
   }
 
-  void swap() {
-    if (_animationController.value == 1)
-      close();
-    else if (_animationController.value == 0) open();
+  /// Opens the panel if it's currently closed,
+  /// or closes the panel if it's currently open
+  void swap({double velocity = 1.0}) {
+    if (isOpen) {
+      close(velocity: velocity);
+    } else if (isClosed) {
+      open(velocity: velocity);
+    }
   }
 
-  //open the panel
-  void open() {
-    _animationController.fling(velocity: 1.0).then((_) => notifyListeners());
+  /// Opens the panel
+  void open({double velocity = 1.0}) {
+    _animationController.fling(velocity: velocity.abs());
   }
 
-  bool isOpen() {
-    return _animationController.value == 1;
-  }
+  /// Whether the panel is fully opened
+  bool get isOpen => _animationController.status == AnimationStatus.completed;
+
+  /// Whether the panel is fully closed
+  bool get isClosed => _animationController.status == AnimationStatus.dismissed;
+
+  /// Whether the panel is being opened
+  bool get isOpening => _animationController.status == AnimationStatus.forward;
+
+  /// Whether the panel is being closed
+  bool get isClosing => _animationController.status == AnimationStatus.reverse;
 }
 
+/// A widget that provides a default bottom bar controller
+/// to its children
 class DefaultBottomBarController extends StatefulWidget {
+  /// The child of the [DefaultBottomBarController] widget
   final Widget child;
 
+  /// Creates a default [BottomBarController] for the given [child] widget
   DefaultBottomBarController({
     Key key,
     @required this.child,
   }) : super(key: key);
 
+  /// Returns the nearest [BottomBarController] of the
+  /// given [BuildContext]
   static BottomBarController of(BuildContext context) {
     final _BottomBarControllerScope scope =
-        context.inheritFromWidgetOfExactType(_BottomBarControllerScope);
+        context.findAncestorWidgetOfExactType<_BottomBarControllerScope>();
     return scope?.controller;
   }
 
