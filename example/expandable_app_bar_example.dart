@@ -60,8 +60,8 @@ class _PageState extends State<Page> with SingleTickerProviderStateMixin {
         body: Container(
             child: GridView.builder(
           itemBuilder: (context, ind) => Card(
-                child: Center(child: Text("Card $ind")),
-              ),
+            child: Center(child: Text("Card $ind")),
+          ),
           padding: EdgeInsets.all(16.0),
           gridDelegate:
               SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
