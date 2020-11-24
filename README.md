@@ -1,6 +1,7 @@
 # ExpandableBottomAppBar
 
 [![pub package](https://img.shields.io/pub/v/expandable_bottom_bar)](https://pub.dev/packages/expandable_bottom_bar)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FrIIh%2Fexpandable-bottom-bar.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FrIIh%2Fexpandable-bottom-bar?ref=badge_shield)
 
 Animatable bottom app bar with expandable sheet
 
@@ -95,3 +96,7 @@ or
 **open** - switch the sheet to closed state<br/>
 **close** - switch the sheet to opened state<br/>
 **swap** - if sheet is opened closes the sheet and vice versa<br/>
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FrIIh%2Fexpandable-bottom-bar.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FrIIh%2Fexpandable-bottom-bar?ref=badge_large)
