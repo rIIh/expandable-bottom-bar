@@ -22,7 +22,7 @@ class Page extends StatefulWidget {
 }
 
 class _PageState extends State<Page> with SingleTickerProviderStateMixin {
-  BottomBarController controller;
+  BottomBarController? controller;
 
   @override
   void initState() {
@@ -45,8 +45,8 @@ class _PageState extends State<Page> with SingleTickerProviderStateMixin {
         // Lets use docked FAB for handling state of sheet
         floatingActionButton: GestureDetector(
           // Set onVerticalDrag event to drag handlers of controller for swipe effect
-          onVerticalDragUpdate: controller.onDrag,
-          onVerticalDragEnd: controller.onDragEnd,
+          onVerticalDragUpdate: controller!.onDrag,
+          onVerticalDragEnd: controller!.onDragEnd,
           child: FloatingActionButton.extended(
             label: Text("Pull up"),
             elevation: 2,
@@ -54,7 +54,7 @@ class _PageState extends State<Page> with SingleTickerProviderStateMixin {
             foregroundColor: Colors.white,
 
             //Set onPressed event to swap state of bottom bar
-            onPressed: () => controller.swap(),
+            onPressed: () => controller!.swap(),
           ),
         ),
         body: Container(
@@ -70,12 +70,12 @@ class _PageState extends State<Page> with SingleTickerProviderStateMixin {
         // Actual expandable bottom bar
         // bottomNavigationBar: PreferredSize(
         appBar: PreferredSize(
-          preferredSize: Size.fromHeight(controller.dragLength),
+          preferredSize: Size.fromHeight(controller!.dragLength!),
           // Size.fromHeight(controller.state.value * controller.dragLength),
           child: BottomExpandableAppBar(
             // Provide the bar controller in build method or default controller as ancestor in a tree
             controller: controller,
-            expandedHeight: controller.dragLength,
+            expandedHeight: controller!.dragLength,
             horizontalMargin: 16,
             attachSide: Side.Top,
             expandedBackColor: Theme.of(context).backgroundColor,
