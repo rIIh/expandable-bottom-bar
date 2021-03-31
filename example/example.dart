@@ -1,5 +1,6 @@
 import 'package:expandable_bottom_bar/expandable_bottom_bar.dart';
 import 'package:flutter/material.dart';
+
 import 'theme.dart';
 
 void main() => runApp(MaterialApp(home: Example()));
@@ -34,8 +35,8 @@ class Page extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
         // Set onVerticalDrag event to drag handlers of controller for swipe effect
-        onVerticalDragUpdate: DefaultBottomBarController.of(context).onDrag,
-        onVerticalDragEnd: DefaultBottomBarController.of(context).onDragEnd,
+        onVerticalDragUpdate: DefaultBottomBarController.of(context)!.onDrag,
+        onVerticalDragEnd: DefaultBottomBarController.of(context)!.onDragEnd,
         child: FloatingActionButton.extended(
           label: Text("Pull up"),
           elevation: 2,
@@ -43,7 +44,7 @@ class Page extends StatelessWidget {
           foregroundColor: Colors.white,
 
           //Set onPressed event to swap state of bottom bar
-          onPressed: () => DefaultBottomBarController.of(context).swap(),
+          onPressed: () => DefaultBottomBarController.of(context)!.swap(),
         ),
       ),
 
@@ -51,8 +52,7 @@ class Page extends StatelessWidget {
       bottomNavigationBar: BottomExpandableAppBar(
         expandedHeight: 550,
         horizontalMargin: 16,
-        shape: AutomaticNotchedShape(
-            RoundedRectangleBorder(), StadiumBorder(side: BorderSide())),
+        shape: AutomaticNotchedShape(RoundedRectangleBorder(), StadiumBorder(side: BorderSide())),
         expandedBackColor: Theme.of(context).backgroundColor,
         expandedBody: Center(
           child: Text("Hello world!"),

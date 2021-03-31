@@ -1,3 +1,7 @@
+## [1.0.3] - 32 March 2021
+
+* Migrating to null-safety
+
 ## [1.0.0] - 11 January 2020
 
 **Breaking**
