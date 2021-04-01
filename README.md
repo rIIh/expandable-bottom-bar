@@ -1,12 +1,15 @@
 # ExpandableBottomAppBar
 
-[![pub package](https://img.shields.io/pub/v/expandable_bottom_bar)](https://pub.dev/packages/expandable_bottom_bar)
+[![pub package](https://img.shields.io/pub/v/expandable_bottom_bar)](https://pub.dev/packages/expandable_bottom_bar_new)
 
 Animatable bottom app bar with expandable sheet
 
+Original package can be found here: https://github.com/rIIh/expandable-bottom-bar
+I've made a fork as the package was no longer maintained.
+
 ## Preview
 
-![preview](https://github.com/rIIh/expandable-bottom-bar/raw/master/showcase.gif)
+![preview](https://github.com/VrajGohil/expandable-bottom-bar/raw/master/showcase.gif)
 
 ## Getting Started
 
@@ -15,7 +18,7 @@ Add the plugin:
 ```yaml
 dependencies:
   ...
-  expandable_bottom_bar: any
+  expandable_bottom_bar_new: 2.0.0-nullsafety.0
 ```
 
 ## Basic Usage
