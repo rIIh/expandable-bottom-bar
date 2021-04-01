@@ -1,4 +1,4 @@
-import 'package:expandable_bottom_bar/src/controller.dart';
+import 'package:expandable_bottom_bar_new/src/controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -95,7 +95,7 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _updateBarController();
-    panelState = _controller?.state?.value ?? panelState;
+    panelState = _controller?.state.value ?? panelState;
   }
 
   @override
@@ -154,7 +154,7 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
         children: <Widget>[
           Padding(
             padding:
-                EdgeInsets.symmetric(horizontal: widget.horizontalMargin ?? 0),
+                EdgeInsets.symmetric(horizontal: widget.horizontalMargin),
             child: Stack(
               children: [
                 Container(
@@ -208,10 +208,7 @@ class _BottomAppBarClipper extends CustomClipper<Path> {
       required this.shape,
       required this.notchMargin,
       required this.buttonOffset})
-      : assert(geometry != null),
-        assert(shape != null),
-        assert(notchMargin != null),
-        super(reclip: geometry);
+      : super(reclip: geometry);
 
   final ValueListenable<ScaffoldGeometry> geometry;
   final NotchedShape shape;

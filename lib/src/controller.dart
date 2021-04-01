@@ -23,12 +23,12 @@ class BottomBarController extends ChangeNotifier {
   @Deprecated(
       "This is deprecated in favor of `state`, and will be removed in the future")
   Animation<double> get animation =>
-      _animationController?.view ?? kAlwaysCompleteAnimation;
+      _animationController.view;
 
   /// Returns the [view] of the internal [AnimationController],
   /// which cannot mutate the state of the [AnimationController]
   Animation<double> get state =>
-      _animationController?.view ?? kAlwaysCompleteAnimation;
+      _animationController.view;
 
   final AnimationController _animationController;
 
