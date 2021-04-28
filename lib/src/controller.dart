@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 
-/// A listenable controller for use with [BottomExpandableBar],
-/// with behavior-related properties and methods
+/// A listenable controller for use with [BottomExpandableBar]
 class BottomBarController extends ChangeNotifier {
   /// Set to true if sheet should snap to Opened and Closed state
   final bool snap;
 
+  double _dragLength;
+
   /// Distance that pointer should travel for fully open or close the sheet
-  final double dragLength;
+  double get dragLength => _dragLength;
+
+  set dragLength(double value) {
+    if (_dragLength == value) return;
+    assert(value == null || value > 0);
+    _dragLength = value;
+  }
 
   /// Creates a [BottomBarController] with the given [vsync] ticker provider
   BottomBarController({
     @required TickerProvider vsync,
-    this.snap: true,
+    this.snap = true,
     double dragLength,
   })  : _animationController = AnimationController(vsync: vsync),
-        assert(dragLength == null || dragLength > 0),
-        dragLength = dragLength {
-    _animationController.addStatusListener(_statusListener);
+        _dragLength = dragLength {
+    _animationController.addStatusListener((_) => notifyListeners());
   }
 
   @Deprecated(
@@ -31,8 +37,6 @@ class BottomBarController extends ChangeNotifier {
       _animationController?.view ?? kAlwaysCompleteAnimation;
 
   final AnimationController _animationController;
-
-  void _statusListener(AnimationStatus status) => notifyListeners();
 
   /// Updates the internal [AnimationController] with the
   /// [DragUpdateDetails] of a [GestureDragUpdateCallback]
@@ -78,7 +82,7 @@ class BottomBarController extends ChangeNotifier {
   }
 
   /// Closes the panel
-  void close({double velocity = -1.0}) {
+  void close({double velocity = 1.0}) {
     _animationController.fling(velocity: -velocity.abs());
   }
 
@@ -108,6 +112,12 @@ class BottomBarController extends ChangeNotifier {
 
   /// Whether the panel is being closed
   bool get isClosing => _animationController.status == AnimationStatus.reverse;
+
+  @override
+  void dispose() {
+    _animationController?.dispose();
+    super.dispose();
+  }
 }
 
 /// A widget that provides a default bottom bar controller
@@ -141,8 +151,8 @@ class _DefaultBottomBarControllerState extends State<DefaultBottomBarController>
 
   @override
   void initState() {
-    super.initState();
     _controller = BottomBarController(vsync: this);
+    super.initState();
   }
 
   @override

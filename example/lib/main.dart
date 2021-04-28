@@ -1,55 +1,64 @@
+import 'package:example/theme.dart';
 import 'package:expandable_bottom_bar/expandable_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'theme.dart';
 
-void main() => runApp(MaterialApp(home: Example()));
+void main() {
+  runApp(MyApp());
+}
 
-class Example extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: FlutterDark.dark(ThemeData.dark()),
+      title: 'Flutter Demo',
+      theme: CustomTheme.dark(),
       home: DefaultBottomBarController(
-        child: Page(),
+        child: ExamplePage(),
       ),
     );
   }
 }
 
-class Page extends StatelessWidget {
+class ExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
-
-      //Set to true for bottom appbar overlap body content
+      //
+      // Set [extendBody] to true for bottom app bar overlap body content
       extendBody: true,
-
       appBar: AppBar(
         title: Text("Panel Showcase"),
         backgroundColor: Theme.of(context).bottomAppBarColor,
       ),
-
+      //
       // Lets use docked FAB for handling state of sheet
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GestureDetector(
+        //
         // Set onVerticalDrag event to drag handlers of controller for swipe effect
         onVerticalDragUpdate: DefaultBottomBarController.of(context).onDrag,
         onVerticalDragEnd: DefaultBottomBarController.of(context).onDragEnd,
         child: FloatingActionButton.extended(
-          label: Text("Pull up"),
+          label: AnimatedBuilder(
+            animation: DefaultBottomBarController.of(context).state,
+            builder: (context, child) => Text(
+              DefaultBottomBarController.of(context).isOpen
+                  ? "Pull down"
+                  : "Pull up",
+            ),
+          ),
           elevation: 2,
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.white,
-
+          //
           //Set onPressed event to swap state of bottom bar
           onPressed: () => DefaultBottomBarController.of(context).swap(),
         ),
       ),
-
+      //
       // Actual expandable bottom bar
       bottomNavigationBar: BottomExpandableAppBar(
-        expandedHeight: 550,
         horizontalMargin: 16,
         shape: AutomaticNotchedShape(
             RoundedRectangleBorder(), StadiumBorder(side: BorderSide())),
@@ -64,7 +73,7 @@ class Page extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  "Tets",
+                  "Foo",
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -73,11 +82,23 @@ class Page extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  "Stet",
+                  "Bar",
                   textAlign: TextAlign.center,
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+      body: GridView.builder(
+        itemCount: 30,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+        ),
+        itemBuilder: (context, index) => Card(
+          color: Theme.of(context).bottomAppBarColor,
+          child: Text(
+            index.toString(),
           ),
         ),
       ),

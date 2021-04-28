@@ -27,8 +27,6 @@ class BottomExpandableAppBar extends StatefulWidget {
 
   /// Height of the bottom app bar
   final double appBarHeight;
-  // TODO: Get max available height
-  final bool useMax;
 
   /// [BoxConstraints] which determines the final height
   /// of the panel
@@ -63,7 +61,7 @@ class BottomExpandableAppBar extends StatefulWidget {
     this.horizontalMargin: 16,
     this.bottomOffset: 10,
     this.shape,
-    this.expandedHeight: 150,
+    this.expandedHeight,
     this.appBarHeight: 50,
     this.attachSide: Side.Bottom,
     this.constraints,
@@ -73,7 +71,6 @@ class BottomExpandableAppBar extends StatefulWidget {
     this.expandedBackColor,
     this.expandedDecoration,
     this.controller,
-    this.useMax: false,
   })  : assert(!(expandedBackColor != null && expandedDecoration != null)),
         super(key: key);
 
@@ -139,63 +136,72 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    final finalHeight = (widget.useMax && widget.constraints != null)
-        ? widget.constraints.biggest.height
-        : widget.expandedHeight;
+    return SafeArea(
+      child: BottomAppBar(
+        color: Colors.transparent,
+        elevation: 0,
+        child: LayoutBuilder(
+          builder: (context, layoutConstraints) {
+            final constraints = widget.constraints ??
+                layoutConstraints.deflate(
+                  EdgeInsets.only(
+                    top: kToolbarHeight * 1.5,
+                    bottom: widget.appBarHeight ?? kToolbarHeight,
+                  ),
+                );
 
-    return BottomAppBar(
-      color: Colors.transparent,
-      elevation: 0,
-      child: Stack(
-        //TODO: Find out how to get top app bar overlap body content of scaffold
-        alignment: widget.attachSide == Side.Bottom
-            ? Alignment.bottomCenter
-            : Alignment.topCenter,
-        children: <Widget>[
-          Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: widget.horizontalMargin ?? 0),
-            child: Stack(
-              children: [
-                Container(
-                  height: panelState * finalHeight +
-                      widget.appBarHeight +
-                      widget.bottomOffset,
-                  decoration: widget.expandedDecoration ??
-                      BoxDecoration(
-                        color: widget.expandedBackColor ??
-                            Theme.of(context).backgroundColor,
-                        borderRadius: BorderRadius.circular(25),
+            final finalHeight = widget.expandedHeight ?? constraints.maxHeight;
+
+            _controller.dragLength = finalHeight;
+
+            return Stack(
+              //TODO: Find out how to get top app bar overlap body content of scaffold
+              alignment: widget.attachSide == Side.Bottom
+                  ? Alignment.bottomCenter
+                  : Alignment.topCenter,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: widget.horizontalMargin ?? 0),
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: panelState * finalHeight +
+                            widget.appBarHeight +
+                            widget.bottomOffset,
+                        decoration: widget.expandedDecoration ??
+                            BoxDecoration(
+                              color: widget.expandedBackColor ??
+                                  Theme.of(context).backgroundColor,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                        child: Opacity(
+                            opacity: panelState > 0.25 ? 1 : panelState * 4,
+                            child: widget.expandedBody),
                       ),
-                  child: Opacity(
-                      opacity: panelState > 0.25 ? 1 : panelState * 4,
-                      child: widget.expandedBody),
+                    ],
+                  ),
+                ),
+                ClipPath(
+                  child: Container(
+                    color: widget.bottomAppBarColor ??
+                        Theme.of(context).bottomAppBarColor,
+                    height: widget.appBarHeight,
+                    child: widget.bottomAppBarBody,
+                  ),
+                  clipper: widget.shape != null
+                      ? _BottomAppBarClipper(
+                          geometry: Scaffold.geometryOf(context),
+                          shape: widget.shape,
+                          notchMargin: 5,
+                          buttonOffset: widget.bottomOffset,
+                        )
+                      : null,
                 ),
               ],
-            ),
-          ),
-          // * Mask content of bottom container in notch
-          Container(
-            // Some mask code
-            height: widget.appBarHeight,
-          ),
-          ClipPath(
-            child: Container(
-              color: widget.bottomAppBarColor ??
-                  Theme.of(context).bottomAppBarColor,
-              height: widget.appBarHeight,
-              child: widget.bottomAppBarBody,
-            ),
-            clipper: widget.shape != null
-                ? _BottomAppBarClipper(
-                    geometry: Scaffold.geometryOf(context),
-                    shape: widget.shape,
-                    notchMargin: 5,
-                    buttonOffset: widget.bottomOffset,
-                  )
-                : null,
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }
