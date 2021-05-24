@@ -1,3 +1,20 @@
+## [2.0.0](https://github.com/rIIh/expandable-bottom-bar/compare/v1.0.2...v2.0.0) (2021-05-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* now package uses Dart SDK >= 2.12.0
+
+### :sparkles: Features
+
+* add full size calculation and update example ([2607bcb](https://github.com/rIIh/expandable-bottom-bar/commit/2607bcba6eddf24014b9494ed3377484eaefdcd0))
+* migrate to null-safety ([fddbb3f](https://github.com/rIIh/expandable-bottom-bar/commit/fddbb3f5a470f19e79eb4dba7238a42031490a0b))
+
+
+### :zap: Refactoring
+
+* **example:** remove unused import ([a0bf568](https://github.com/rIIh/expandable-bottom-bar/commit/a0bf56896a18ad0d018d605c44ceffb2ee894f5f))
+
 ## [1.0.0] - 11 January 2020
 
 **Breaking**
