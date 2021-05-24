@@ -6,7 +6,7 @@ Animatable bottom app bar with expandable sheet
 
 ## Preview
 
-![preview](https://github.com/rIIh/expandable-bottom-bar/raw/master/showcase.gif)
+![preview](https://github.com/rIIh/expandable-bottom-bar/raw/master/media/showcase.gif)
 
 ## Getting Started
 
