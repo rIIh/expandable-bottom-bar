@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:example/theme.dart';
 import 'package:expandable_bottom_bar/expandable_bottom_bar.dart';
 import 'package:flutter/material.dart';
@@ -42,10 +44,32 @@ class ExamplePage extends StatelessWidget {
         child: FloatingActionButton.extended(
           label: AnimatedBuilder(
             animation: DefaultBottomBarController.of(context).state,
-            builder: (context, child) => Text(
-              DefaultBottomBarController.of(context).isOpen
-                  ? "Pull down"
-                  : "Pull up",
+            builder: (context, child) => Row(
+              children: [
+                Text(
+                  DefaultBottomBarController.of(context).isOpen ? "Pull" : "Pull",
+                ),
+                const SizedBox(width: 4.0),
+                AnimatedBuilder(
+                  animation: DefaultBottomBarController.of(context).state,
+                  builder: (context, child) => Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.diagonal3Values(
+                      1,
+                      DefaultBottomBarController.of(context).state.value * 2 - 1,
+                      1,
+                    ),
+                    child: child,
+                  ),
+                  child: RotatedBox(
+                    quarterTurns: 1,
+                    child: Icon(
+                      Icons.chevron_right,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           elevation: 2,
@@ -60,8 +84,7 @@ class ExamplePage extends StatelessWidget {
       // Actual expandable bottom bar
       bottomNavigationBar: BottomExpandableAppBar(
         horizontalMargin: 16,
-        shape: AutomaticNotchedShape(
-            RoundedRectangleBorder(), StadiumBorder(side: BorderSide())),
+        shape: AutomaticNotchedShape(RoundedRectangleBorder(), StadiumBorder(side: BorderSide())),
         expandedBackColor: Theme.of(context).backgroundColor,
         expandedBody: Center(
           child: Text("Hello world!"),

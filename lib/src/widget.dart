@@ -9,17 +9,17 @@ enum Side { Top, Bottom }
 class BottomExpandableAppBar extends StatefulWidget {
   /// The content visible when the [BottomExpandableAppBar]
   /// is expanded
-  final Widget expandedBody;
+  final Widget? expandedBody;
 
   /// The height of the expanded [BottomExpandableAppBar]
-  final double expandedHeight;
+  final double? expandedHeight;
 
   /// The content of the bottom app bar
-  final Widget bottomAppBarBody;
+  final Widget? bottomAppBarBody;
 
   /// A [BottomBarController] to use with the
   /// [BottomExpandableAppBar]
-  final BottomBarController controller;
+  final BottomBarController? controller;
 
   /// A [Side] which determines which side of the
   /// screen the panel is attached to
@@ -28,18 +28,20 @@ class BottomExpandableAppBar extends StatefulWidget {
   /// Height of the bottom app bar
   final double appBarHeight;
 
+  final double notchMargin;
+
   /// [BoxConstraints] which determines the final height
   /// of the panel
-  final BoxConstraints constraints;
+  final BoxConstraints? constraints;
 
   /// [NotchedShape] shape for a [FloatingActionButton]
-  final NotchedShape shape;
+  final NotchedShape? shape;
 
   /// Background [Color] for the panel
-  final Color expandedBackColor;
+  final Color? expandedBackColor;
 
   /// [Color] of the bottom app bar
-  final Color bottomAppBarColor;
+  final Color? bottomAppBarColor;
 
   /// Margin on the horizontal axis
   /// for the bottom app bar content
@@ -50,20 +52,20 @@ class BottomExpandableAppBar extends StatefulWidget {
   final double bottomOffset;
 
   /// [Decoration] for the panel container
-  final Decoration expandedDecoration;
+  final Decoration? expandedDecoration;
 
   /// [Decoration] for the bottom app bar
-  final Decoration appBarDecoration;
+  final Decoration? appBarDecoration;
 
   BottomExpandableAppBar({
-    Key key,
+    Key? key,
     this.expandedBody,
-    this.horizontalMargin: 16,
-    this.bottomOffset: 10,
-    this.shape,
     this.expandedHeight,
-    this.appBarHeight: 50,
-    this.attachSide: Side.Bottom,
+    this.horizontalMargin = 16,
+    this.bottomOffset = 10,
+    this.shape,
+    this.appBarHeight = kToolbarHeight,
+    this.attachSide = Side.Bottom,
     this.constraints,
     this.bottomAppBarColor,
     this.appBarDecoration,
@@ -71,6 +73,7 @@ class BottomExpandableAppBar extends StatefulWidget {
     this.expandedBackColor,
     this.expandedDecoration,
     this.controller,
+    this.notchMargin = 5,
   })  : assert(!(expandedBackColor != null && expandedDecoration != null)),
         super(key: key);
 
@@ -79,12 +82,12 @@ class BottomExpandableAppBar extends StatefulWidget {
 }
 
 class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
-  BottomBarController _controller;
-  double panelState;
+  BottomBarController? _controller;
+  late double panelState;
 
   void _handleBottomBarControllerAnimationTick() {
-    if (_controller.state.value == panelState) return;
-    panelState = _controller.state.value;
+    if (_controller!.state.value == panelState) return;
+    panelState = _controller!.state.value;
     setState(() {});
   }
 
@@ -92,7 +95,7 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _updateBarController();
-    panelState = _controller?.state?.value ?? panelState;
+    panelState = _controller!.state.value;
   }
 
   @override
@@ -103,121 +106,99 @@ class _BottomExpandableAppBarState extends State<BottomExpandableAppBar> {
 
   @override
   void dispose() {
-    if (_controller != null)
-      _controller.state.removeListener(_handleBottomBarControllerAnimationTick);
+    _controller?.state.removeListener(_handleBottomBarControllerAnimationTick);
     // We don't own the _controller Animation, so it's not disposed here.
     super.dispose();
   }
 
   void _updateBarController() {
-    final BottomBarController newController =
-        widget.controller ?? DefaultBottomBarController.of(context);
-    assert(() {
-      if (newController == null) {
-        throw FlutterError('No BottomBarController for ${widget.runtimeType}.\n'
-            'When creating a ${widget.runtimeType}, you must either provide an explicit '
-            'BottomBarController using the "controller" property, or you must ensure that there '
-            'is a DefaultBottomBarController above the ${widget.runtimeType}.\n'
-            'In this case, there was neither an explicit controller nor a default controller.');
-      }
-      return true;
-    }());
+    final BottomBarController newController = widget.controller ?? DefaultBottomBarController.of(context);
 
     if (newController == _controller) return;
 
     if (_controller != null) {
-      _controller.state.removeListener(_handleBottomBarControllerAnimationTick);
+      _controller!.state.removeListener(_handleBottomBarControllerAnimationTick);
     }
+
     _controller = newController;
+
     if (_controller != null) {
-      _controller.state.addListener(_handleBottomBarControllerAnimationTick);
+      _controller!.state.addListener(_handleBottomBarControllerAnimationTick);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: BottomAppBar(
-        color: Colors.transparent,
-        elevation: 0,
-        child: LayoutBuilder(
-          builder: (context, layoutConstraints) {
-            final constraints = widget.constraints ??
-                layoutConstraints.deflate(
-                  EdgeInsets.only(
-                    top: kToolbarHeight * 1.5,
-                    bottom: widget.appBarHeight ?? kToolbarHeight,
-                  ),
-                );
+    EdgeInsets viewPadding = widget.attachSide == Side.Bottom
+        ? EdgeInsets.only(bottom: MediaQuery.of(context).viewPadding.bottom)
+        : EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top);
 
-            final finalHeight = widget.expandedHeight ?? constraints.maxHeight;
-
-            _controller.dragLength = finalHeight;
-
-            return Stack(
-              //TODO: Find out how to get top app bar overlap body content of scaffold
-              alignment: widget.attachSide == Side.Bottom
-                  ? Alignment.bottomCenter
-                  : Alignment.topCenter,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: widget.horizontalMargin ?? 0),
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: panelState * finalHeight +
-                            widget.appBarHeight +
-                            widget.bottomOffset,
-                        decoration: widget.expandedDecoration ??
-                            BoxDecoration(
-                              color: widget.expandedBackColor ??
-                                  Theme.of(context).backgroundColor,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                        child: Opacity(
-                            opacity: panelState > 0.25 ? 1 : panelState * 4,
-                            child: widget.expandedBody),
-                      ),
-                    ],
-                  ),
-                ),
-                ClipPath(
-                  child: Container(
-                    color: widget.bottomAppBarColor ??
-                        Theme.of(context).bottomAppBarColor,
-                    height: widget.appBarHeight,
-                    child: widget.bottomAppBarBody,
-                  ),
-                  clipper: widget.shape != null
-                      ? _BottomAppBarClipper(
-                          geometry: Scaffold.geometryOf(context),
-                          shape: widget.shape,
-                          notchMargin: 5,
-                          buttonOffset: widget.bottomOffset,
-                        )
-                      : null,
-                ),
-              ],
+    return LayoutBuilder(
+      builder: (context, layoutConstraints) {
+        final constraints = widget.constraints ??
+            layoutConstraints.deflate(
+              EdgeInsets.only(
+                top: kToolbarHeight * 1.5,
+                bottom: widget.appBarHeight,
+              ),
             );
-          },
-        ),
-      ),
+
+        final finalHeight = widget.expandedHeight ?? constraints.maxHeight - viewPadding.vertical;
+
+        _controller!.dragLength = finalHeight;
+
+        return Stack(
+          alignment: widget.attachSide == Side.Bottom ? Alignment.bottomCenter : Alignment.topCenter,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: widget.horizontalMargin),
+              child: Stack(
+                children: [
+                  Container(
+                    height: panelState * finalHeight + widget.appBarHeight + widget.bottomOffset + viewPadding.vertical,
+                    decoration: widget.expandedDecoration ??
+                        BoxDecoration(
+                          color: widget.expandedBackColor ?? Theme.of(context).backgroundColor,
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                    child: Opacity(opacity: panelState > 0.25 ? 1 : panelState * 4, child: widget.expandedBody),
+                  ),
+                ],
+              ),
+            ),
+            ClipPath(
+              child: Container(
+                color: widget.bottomAppBarColor ?? Theme.of(context).bottomAppBarColor,
+                height: widget.appBarHeight + viewPadding.vertical,
+                child: Padding(
+                  padding: viewPadding,
+                  child: widget.bottomAppBarBody,
+                ),
+              ),
+              clipper: widget.shape != null
+                  ? _BottomAppBarClipper(
+                      geometry: Scaffold.geometryOf(context),
+                      shape: widget.shape!,
+                      notchMargin: widget.notchMargin,
+                      buttonOffset: widget.bottomOffset,
+                    )
+                  : null,
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
 // Copied from Flutter SDK
 class _BottomAppBarClipper extends CustomClipper<Path> {
-  const _BottomAppBarClipper(
-      {@required this.geometry,
-      @required this.shape,
-      @required this.notchMargin,
-      @required this.buttonOffset})
-      : assert(geometry != null),
-        assert(shape != null),
-        assert(notchMargin != null),
-        super(reclip: geometry);
+  const _BottomAppBarClipper({
+    required this.geometry,
+    required this.shape,
+    required this.notchMargin,
+    required this.buttonOffset,
+  }) : super(reclip: geometry);
 
   final ValueListenable<ScaffoldGeometry> geometry;
   final NotchedShape shape;
@@ -229,18 +210,15 @@ class _BottomAppBarClipper extends CustomClipper<Path> {
     // button is the floating action button's bounding rectangle in the
     // coordinate system whose origin is at the appBar's top left corner,
     // or null if there is no floating action button.
-    final Rect button = geometry.value.floatingActionButtonArea?.translate(
+    final Rect? button = geometry.value.floatingActionButtonArea?.translate(
       0.0,
-      geometry.value.bottomNavigationBarTop * -1.0 - buttonOffset,
+      (geometry.value.bottomNavigationBarTop ?? 0) * -1.0 - buttonOffset,
     );
-    return shape.getOuterPath(
-        Offset(0, 0) & size, button?.inflate(notchMargin));
+    return shape.getOuterPath(Offset(0, 0) & size, button?.inflate(notchMargin));
   }
 
   @override
   bool shouldReclip(_BottomAppBarClipper oldClipper) {
-    return oldClipper.geometry != geometry ||
-        oldClipper.shape != shape ||
-        oldClipper.notchMargin != notchMargin;
+    return oldClipper.geometry != geometry || oldClipper.shape != shape || oldClipper.notchMargin != notchMargin;
   }
 }
