@@ -18,7 +18,7 @@ jobs:
     # available. See https://hub.docker.com/r/google/dart/ for the available
     # images.
     container:
-      image:  google/dart:latest
+      image:  cirrusci/flutter:2.0.6
 
     steps:
       - uses: actions/checkout@v2
@@ -26,30 +26,21 @@ jobs:
       - name: Print Dart SDK version
         run: dart --version
 
+      - name: Print Flutter SDK version
+        run: flutter --version
+
       - name: Install dependencies
-        run: dart pub get
+        run: flutter pub get
 
-      # Uncomment this step to verify the use of 'dart format' on each commit.
-      # - name: Verify formatting
-      #   run: dart format --output=none --set-exit-if-changed .
-
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
       - name: Analyze project source
-        run: dart analyze
+        run: flutter analyze
 
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
       - name: Run tests
-        run: dart test
-  # This workflow contains a single job called "build"
+        run: flutter test
   release:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
     needs: [test]
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       - name: Semantic Release
@@ -69,11 +60,7 @@ jobs:
     needs: [release]
     steps:
       - name: Repository Dispatch Publish Event
-        # You may pin to the exact commit or the version.
-        # uses: peter-evans/repository-dispatch@ce5485de42c9b2622d2ed064be479e8ed65e76f4
         uses: peter-evans/repository-dispatch@v1.1.3
         with:
-          # A repo scoped GitHub Personal Access Token
           token:  ${{ secrets.GITHUB_TOKEN }}
-          # A custom webhook event name.
           event-type: publish-event
