@@ -34,6 +34,8 @@ jobs:
       image: google/dart:latest
     steps:
       - uses: actions/checkout@v2
+      - name: Format code
+        run: dart format .
       - uses: sakebook/actions-flutter-pub-publisher@v1.3.1
         with:
           credential: ${{ secrets.GOOGLE_AUTH }}
