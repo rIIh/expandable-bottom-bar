@@ -3,7 +3,7 @@ description: Animatable bottom app bar with expandable sheet. Use me if you need
   cool bottom bar!
 homepage: https://github.com/rIIh/expandable-bottom-bar
 
-version: 2.0.1
+version: 2.0.2
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

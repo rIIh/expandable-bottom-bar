@@ -1,3 +1,10 @@
+### [2.0.2](https://github.com/rIIh/expandable-bottom-bar/compare/v2.0.1...v2.0.2) (2021-05-26)
+
+
+### :zap: Refactoring
+
+* **ci:** format code on publish pipeline ([3f7462f](https://github.com/rIIh/expandable-bottom-bar/commit/3f7462f92cdfac6c782f0832e36becf159580ad0))
+
 ### [2.0.1](https://github.com/rIIh/expandable-bottom-bar/compare/v2.0.0...v2.0.1) (2021-05-24)
 
 
